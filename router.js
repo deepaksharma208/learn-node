@@ -1,5 +1,6 @@
 const express = require('express');
-const ObjectID = require('mongodb').ObjectID;
+const mongodb = require('mongodb');
+const ObjectID = mongodb.ObjectId;
 
 // This function will hold all the routing functionality for the database, and will be used in server.js
 const newRouter = function (collection) {
@@ -26,7 +27,7 @@ const newRouter = function (collection) {
   router.get('/:id', (req, res) => {
     const id = req.params.id;
     collection
-      .findOne({ _id: id })
+      .findOne({ _id: new ObjectID(id) })
       .then((doc) => res.json(doc))
       .catch((err) => errorCatcher(err));
   });
@@ -35,7 +36,7 @@ const newRouter = function (collection) {
   router.delete('/:id', (req, res) => {
     const id = req.params.id;
     collection
-      .deleteOne({ _id: ObjectID(id) })
+      .deleteOne({ _id: new ObjectID(id) })
       .then(() => collection.find().toArray())
       .then((docs) => res.json(docs))
       .catch((err) => errorCatcher(err));
@@ -59,7 +60,7 @@ const newRouter = function (collection) {
     const updatedItem = req.body;
 
     collection
-    .findOneAndUpdate({ _id: ObjectID(itemId) }, { $set: updatedItem })
+    .findOneAndUpdate({ _id: new ObjectID(itemId) }, { $set: updatedItem })
     .then(result => {
       res.json(result.value);
     })
